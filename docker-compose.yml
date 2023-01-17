@@ -1,0 +1,30 @@
+version: "3.5"
+
+services:
+  api:
+    image: "fastapi_auth_webapp_dev:0.1.0"
+    container_name: "fastapi_auth_webapp_dev"
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "11443:8000"
+    volumes:
+      - ./app:/usr/src/app:cached
+    working_dir: /usr/src/app
+    networks:
+      - posse_network
+    environment:
+      APP_ENV: "development"
+      TZ: "Asia/Tokyo"
+    env_file:
+      - .env.development
+
+networks:
+  default:
+    external:
+      name: bridge
+  posse_network:
+    name: posse_network
+    driver: bridge
+    external: true
