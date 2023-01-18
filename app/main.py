@@ -1,12 +1,18 @@
+# ref: https://zenn.dev/yusugomori/articles/a3d5dc8baf9e386a58e5
 from starlette.middleware.base import BaseHTTPMiddleware
 from middlewares import http_log
 from fastapi import FastAPI, APIRouter, Depends
 from starlette.middleware.cors import CORSMiddleware
 import env
 from modules.auth import JWTBearer, jwks
+from routers.home import router as home_router
 
 router = APIRouter()
 auth = JWTBearer(jwks)
+
+router.include_router(home_router,
+                      prefix='/home',
+                      tags=['home'])
 
 if env.APP_ENV == 'development':
     app = FastAPI()
@@ -22,8 +28,8 @@ app.include_router(
 )
 
 origins = [
-    env.ADMIN_REACT_HOST,
-    f'https://{env.ADMIN_REACT_HOST}'
+    env.WEBAPP_REACT_HOST,
+    f'https://{env.WEBAPP_REACT_HOST}'
 ]
 
 app.add_middleware(
