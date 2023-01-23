@@ -5,14 +5,27 @@ from fastapi import FastAPI, APIRouter, Depends
 from starlette.middleware.cors import CORSMiddleware
 import env
 from modules.auth import JWTBearer, jwks
-from routers.home import router as home_router
+from routers.private.home import router as home_router
+from routers.open.curriculum import router as curriculum_router
 
 router = APIRouter()
 auth = JWTBearer(jwks)
 
-router.include_router(home_router,
-                      prefix='/home',
-                      tags=['home'])
+private_router = APIRouter()
+open_router = APIRouter()
+
+private_router.include_router(home_router,
+                              prefix='/home')
+
+open_router.include_router(curriculum_router,
+                           prefix='/curriculums')
+
+router.include_router(private_router,
+                      prefix='/private',
+                      dependencies=[Depends(auth)])
+
+router.include_router(open_router,
+                      prefix='/open')
 
 if env.APP_ENV == 'development':
     app = FastAPI()
@@ -23,8 +36,7 @@ else:
 
 app.include_router(
     router,
-    prefix='/v1',
-    dependencies=[Depends(auth)]
+    prefix='/v1'
 )
 
 origins = [
@@ -40,10 +52,9 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+app.add_middleware(BaseHTTPMiddleware, dispatch=http_log)
+
 
 @app.get('/')
 def root():
     return {'Hello': 'World'}
-
-
-app.add_middleware(BaseHTTPMiddleware, dispatch=http_log)

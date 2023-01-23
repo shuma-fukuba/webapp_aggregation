@@ -71,4 +71,4 @@ class JWTBearer(HTTPBearer):
                 raise HTTPException(
                     status_code=HTTP_403_FORBIDDEN, detail="JWK invalid")
 
-            return
+            return jwt_credentials
