@@ -1,3 +1,4 @@
+# ref: https://zenn.dev/yusugomori/articles/a3d5dc8baf9e386a58e5
 version: "3.5"
 
 services:
@@ -8,7 +9,7 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     ports:
-      - "11443:8000"
+      - "19943:8000"
     volumes:
       - ./app:/usr/src/app:cached
     working_dir: /usr/src/app

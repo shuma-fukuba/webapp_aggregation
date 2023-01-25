@@ -16,6 +16,13 @@ auth = JWTBearer(jwks)
 
 async def get_current_user(credentials: JWTAuthorizationCredentials = Depends(auth)) -> str:
     try:
+        return credentials.claims['cognito:username']
+    except KeyError:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail='User attributes missing.')
+
+async def get_current_username(credentials: JWTAuthorizationCredentials = Depends(auth)) -> str:
+    try:
         return credentials.claims['sub']
     except KeyError:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
