@@ -27,7 +27,7 @@ class JWTAuthorizationCredentials(BaseModel):
 
 
 class JWTBearer(HTTPBearer):
-    def __init__(self, *, jwks: JWKS, auto_error: bool = True):
+    def __init__(self, jwks: JWKS, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
         self.kid_to_jwk = {jwk['kid']: jwk for jwk in jwks.keys}
 
@@ -71,4 +71,4 @@ class JWTBearer(HTTPBearer):
                 raise HTTPException(
                     status_code=HTTP_403_FORBIDDEN, detail="JWK invalid")
 
-            return
+            return jwt_credentials
